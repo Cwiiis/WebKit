@@ -235,6 +235,7 @@ public:
 
     enum class SiteState : uint8_t { NotYetSpecified, MultipleSites, SharedProcess };
     const Expected<WebCore::Site, SiteState>& site() const LIFETIME_BOUND { return m_site; }
+    void setInitialSite(WebCore::Site&&);
 
     bool isSharedProcess() const { return !m_site && m_site.error() == SiteState::SharedProcess; }
     const std::optional<WebCore::Site>& sharedProcessMainFrameSite() const LIFETIME_BOUND { return m_sharedProcessMainFrameSite; }

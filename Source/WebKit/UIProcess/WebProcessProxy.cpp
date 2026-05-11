@@ -2392,6 +2392,16 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     }
 }
 
+void WebProcessProxy::setInitialSite(WebCore::Site&& site)
+{
+    // Tag a freshly-created WebProcess with the site it is about to host, before any
+    // navigation has progressed far enough to update m_site through the usual path.
+    // No-op if m_site has already left the NotYetSpecified state.
+    if (m_site || m_site.error() != SiteState::NotYetSpecified)
+        return;
+    m_site = WTF::move(site);
+}
+
 void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<WebCore::Site>& site, const WebCore::Site& mainFrameSite)
 {
     if (!site) {

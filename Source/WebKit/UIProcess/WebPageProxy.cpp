@@ -10146,6 +10146,13 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
         return protect(m_configuration->processPool())->processForSite(protect(websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, responseSite, responseSite, { }, lockdownMode, enhancedSecurity, m_configuration, WebCore::ProcessSwapDisposition::COOP);
     }();
 
+    // The new cross-origin-isolated WebProcess will host responseSite. Tag it now so
+    // that subsequent process-selection decisions (notably SharedWorker colocation in
+    // WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess) can
+    // recognise this process as a valid host for same-site workers.
+    if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
+        processForNavigation->setInitialSite(WebCore::Site { responseSite });
+
     performProcessSwapForNavigationResponse(*navigation, m_browsingContextGroup.copyRef(), WTF::move(processForNavigation), WebCore::ProcessSwapDisposition::COOP, existingNetworkResourceLoadIdentifierToResume, WTF::move(completionHandler));
 }
 
