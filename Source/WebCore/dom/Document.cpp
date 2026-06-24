@@ -8571,8 +8571,11 @@ String Document::agentClusterID() const
         auto opaqueID = data.opaqueOriginIdentifier();
         return makeString(browsingContextGroupIdentifier, "-opaque-"_s, opaqueID ? opaqueID->toString() : String { });
     }
+    // Key cross-origin-isolated agent clusters by origin only and let them span
+    // BrowsingContextGroups, so same-origin COI documents in different tabs
+    // share an agent cluster ID. NOTE: This is a deviation from the spec.
     if (crossOriginIsolated())
-        return makeString(browsingContextGroupIdentifier, "-coi-"_s, data.toString());
+        return makeString("coi-"_s, data.toString());
     if (m_isOriginKeyed == OriginKeyed::Yes)
         return makeString(browsingContextGroupIdentifier, "-oac-"_s, data.toString());
     return makeString(browsingContextGroupIdentifier, '-', Site(data).toString());
