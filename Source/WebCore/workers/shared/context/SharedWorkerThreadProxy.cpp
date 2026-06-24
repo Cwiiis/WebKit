@@ -90,7 +90,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         *initializationData.clientIdentifier,
         document.advancedPrivacyProtections(),
         document.noiseInjectionHashSalt(),
-        makeString(Process::identifier().toUInt64(), "-sharedworker-"_s, initializationData.clientIdentifier->toString())
+        WTF::move(initializationData.agentClusterID)
     };
 }
 
